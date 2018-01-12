@@ -26,6 +26,9 @@ import android.widget.Toast;
 
 import com.example.android.datafrominternet.utilities.NetworkUtils;
 
+import java.io.IOException;
+import java.net.URL;
+
 public class MainActivity extends AppCompatActivity {
 
     EditText mSearchBoxEditText;
@@ -69,7 +72,15 @@ public class MainActivity extends AppCompatActivity {
     private void makeGithubSearchQuery() {
         // get the text from the EditText
         String query = mSearchBoxEditText.getText().toString();
-        // build the URL with EditText query and set the built URL to the TextView
-        mUrlDisplayTextView.setText(NetworkUtils.buildUrl(query).toString());
+        // build the URL with EditText query
+        URL url = NetworkUtils.buildUrl(query);
+        // set the built URL to the TextView
+        mUrlDisplayTextView.setText(url.toString());
+        // get response from getResponseFromHttpUrl and display the results in mSearchResultsTextView
+        try {
+            mSearchResultsTextView.setText(NetworkUtils.getResponseFromHttpUrl(url));
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
     }
 }
