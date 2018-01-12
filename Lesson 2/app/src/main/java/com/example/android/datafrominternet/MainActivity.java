@@ -21,7 +21,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
     EditText mSearchBoxEditText;
     TextView mUrlDisplayTextView;
     TextView mSearchResultsTextView;
+    TextView mErrorMessageTextView;
+    ProgressBar mLoadingIndicatorProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
         mSearchBoxEditText = (EditText) findViewById(R.id.et_search_box);
         mUrlDisplayTextView = (TextView) findViewById(R.id.tv_url_display);
         mSearchResultsTextView = (TextView) findViewById(R.id.tv_github_search_results_json);
+        mErrorMessageTextView = (TextView) findViewById(R.id.tv_error_message_display);
+        mLoadingIndicatorProgressBar = (ProgressBar) findViewById(R.id.pb_loading_indicator);
     }
 
     /*
@@ -67,13 +73,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // TODO (2) Override the doInBackground method to perform the query. Return the results. (Hint: You've already written the code to perform the query)
-    // TODO (3) Override onPostExecute to display the results in the TextView
-
     /**
-     * Perfomr the query.
+     * Perform the query.
      */
     class GithubQueryTask extends AsyncTask<URL, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            // set the loading indicator to visible
+            mLoadingIndicatorProgressBar.setVisibility(View.VISIBLE);
+        }
 
         @Override
         protected String doInBackground(URL... urls) {
@@ -89,10 +98,30 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String s) {
+            // as soon as the loading is complete, hide the loading indicator
+            mLoadingIndicatorProgressBar.setVisibility(View.INVISIBLE);
             // display the results in mSearchResultsTextView
             if(s != null && s.length() > 0) {
+                this.showJsonDataView();
                 mSearchResultsTextView.setText(s);
             }
+        }
+
+        /*
+            Handle errors.
+         */
+        private void showJsonDataView() {
+            // show the data
+            mSearchResultsTextView.setVisibility(View.VISIBLE);
+            // hide the error
+            mErrorMessageTextView.setVisibility(View.INVISIBLE);
+        }
+
+        private void showErrorMessage() {
+            // show the error
+            mErrorMessageTextView.setVisibility(View.VISIBLE);
+            // hide the data
+            mSearchResultsTextView.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -109,6 +138,4 @@ public class MainActivity extends AppCompatActivity {
         // create a new GithubQueryTask and call its execute method, passing in the url to query
         new GithubQueryTask().execute(url);
     }
-
-
 }
