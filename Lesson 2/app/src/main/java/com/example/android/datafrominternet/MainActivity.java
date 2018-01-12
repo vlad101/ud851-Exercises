@@ -15,6 +15,7 @@
  */
 package com.example.android.datafrominternet;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -66,6 +67,35 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // TODO (2) Override the doInBackground method to perform the query. Return the results. (Hint: You've already written the code to perform the query)
+    // TODO (3) Override onPostExecute to display the results in the TextView
+
+    /**
+     * Perfomr the query.
+     */
+    class GithubQueryTask extends AsyncTask<URL, Void, String> {
+
+        @Override
+        protected String doInBackground(URL... urls) {
+            // get response from getResponseFromHttpUrl
+            String response = null;
+            try {
+                response = NetworkUtils.getResponseFromHttpUrl(urls[0]);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return response;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            // display the results in mSearchResultsTextView
+            if(s != null && s.length() > 0) {
+                mSearchResultsTextView.setText(s);
+            }
+        }
+    }
+
     /*
         Util Methods.
      */
@@ -76,11 +106,9 @@ public class MainActivity extends AppCompatActivity {
         URL url = NetworkUtils.buildUrl(query);
         // set the built URL to the TextView
         mUrlDisplayTextView.setText(url.toString());
-        // get response from getResponseFromHttpUrl and display the results in mSearchResultsTextView
-        try {
-            mSearchResultsTextView.setText(NetworkUtils.getResponseFromHttpUrl(url));
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
+        // create a new GithubQueryTask and call its execute method, passing in the url to query
+        new GithubQueryTask().execute(url);
     }
+
+
 }
