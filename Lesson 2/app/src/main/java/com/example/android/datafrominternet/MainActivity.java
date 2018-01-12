@@ -34,11 +34,11 @@ import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
-    EditText mSearchBoxEditText;
-    TextView mUrlDisplayTextView;
-    TextView mSearchResultsTextView;
-    TextView mErrorMessageTextView;
-    ProgressBar mLoadingIndicatorProgressBar;
+    private EditText mSearchBoxEditText;
+    private TextView mUrlDisplayTextView;
+    private TextView mSearchResultsTextView;
+    private TextView mErrorMessageTextView;
+    private ProgressBar mLoadingIndicatorProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
+            super.onPreExecute();
             // set the loading indicator to visible
             mLoadingIndicatorProgressBar.setVisibility(View.VISIBLE);
         }
@@ -104,24 +105,27 @@ public class MainActivity extends AppCompatActivity {
             if(s != null && s.length() > 0) {
                 this.showJsonDataView();
                 mSearchResultsTextView.setText(s);
+            } else {
+                // show error if there is no result
+                this.showErrorMessage();
             }
         }
 
         /*
-            Handle errors.
+            Helper methods.
          */
         private void showJsonDataView() {
-            // show the data
-            mSearchResultsTextView.setVisibility(View.VISIBLE);
             // hide the error
             mErrorMessageTextView.setVisibility(View.INVISIBLE);
+            // show the data
+            mSearchResultsTextView.setVisibility(View.VISIBLE);
         }
 
         private void showErrorMessage() {
-            // show the error
-            mErrorMessageTextView.setVisibility(View.VISIBLE);
             // hide the data
             mSearchResultsTextView.setVisibility(View.INVISIBLE);
+            // show the error
+            mErrorMessageTextView.setVisibility(View.VISIBLE);
         }
     }
 
