@@ -24,11 +24,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.datafrominternet.utilities.NetworkUtils;
+
 public class MainActivity extends AppCompatActivity {
 
-    private EditText mSearchBoxEditText;
-    private TextView mUrlDisplayTextView;
-    private TextView mSearchResultsTextView;
+    EditText mSearchBoxEditText;
+    TextView mUrlDisplayTextView;
+    TextView mSearchResultsTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +56,20 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.action_search:
-                Toast.makeText(MainActivity.this, "Search Selected", Toast.LENGTH_SHORT).show();
+                this.makeGithubSearchQuery();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    /*
+        Util Methods.
+     */
+    private void makeGithubSearchQuery() {
+        // get the text from the EditText
+        String query = mSearchBoxEditText.getText().toString();
+        // build the URL with EditText query and set the built URL to the TextView
+        mUrlDisplayTextView.setText(NetworkUtils.buildUrl(query).toString());
     }
 }
