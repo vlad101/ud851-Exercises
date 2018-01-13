@@ -20,6 +20,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +37,8 @@ import java.net.URL;
 public class MainActivity extends AppCompatActivity {
 
     private TextView mWeatherDisplayTextView;
+    private TextView mDisplayErrorTextView;
+    private ProgressBar mDisplayProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_forecast);
 
         mWeatherDisplayTextView = (TextView) findViewById(R.id.tv_weather_data);
+        mDisplayErrorTextView = (TextView) findViewById(R.id.tv_error);
+        mDisplayProgressBar = (ProgressBar) findViewById(R.id.pb_loader);
 
         // perform the network request to get the weather
         this.loadWeatherData();
@@ -59,6 +65,13 @@ public class MainActivity extends AppCompatActivity {
      * Class performs the network request
      */
     public class FetchWeatherTask extends AsyncTask<URL, Void, String[]> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // show the loading indicator
+            mDisplayProgressBar.setVisibility(View.VISIBLE);
+        }
 
         @Override
         protected String[] doInBackground(URL... urls) {
@@ -79,11 +92,37 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String[] s) {
-            if(s != null) {
+            mDisplayProgressBar.setVisibility(View.INVISIBLE);
+            if(s != null && s.length > 0) {
+                // hide the error, show the data
+                this.showWeatherDataView();
                 // iterate over weather data and display the results of the network request
                 for(String data : s)
                     mWeatherDisplayTextView.append(data + "\n\n\n");
+            } else {
+                // hide the data, show the error
+                this.showErrorMessage();
             }
+        }
+
+        /**
+         * Method will hide the error message and show the weather data.
+         */
+        private void showErrorMessage() {
+            // hide the weather data
+            mWeatherDisplayTextView.setVisibility(View.INVISIBLE);
+            // show the error message
+            mDisplayErrorTextView.setVisibility(View.VISIBLE);
+        }
+
+        /**
+         * Method will hide the error message and show the weather data.
+         */
+        private void showWeatherDataView() {
+            // hide the error message
+            mDisplayErrorTextView.setVisibility(View.INVISIBLE);
+            // show the weather data
+            mWeatherDisplayTextView.setVisibility(View.VISIBLE);
         }
     }
 

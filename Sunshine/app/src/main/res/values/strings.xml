@@ -27,6 +27,9 @@
     <!-- For labelling a refresh menu item [CHAR LIMIT=15] -->
     <string name="action_refresh">Refresh</string>
 
+    <!-- For labelling an error message [CHAR LIMIT=15] -->
+    <string name="error">An error occurred...</string>
+
     <!-- - - - - - - - - - - - - -->
     <!--Used by SunshineDateUtils-->
     <!-- - - - - - - - - - - - - -->
