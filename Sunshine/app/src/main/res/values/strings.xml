@@ -24,6 +24,8 @@
     <!--or something similar.-->
     <string name="app_name">Sunshine</string>
 
+    <!-- For labelling a refresh menu item [CHAR LIMIT=15] -->
+    <string name="action_refresh">Refresh</string>
 
     <!-- - - - - - - - - - - - - -->
     <!--Used by SunshineDateUtils-->
