@@ -15,9 +15,19 @@
  */
 package com.example.android.sunshine;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
+
+import com.example.android.sunshine.data.SunshinePreferences;
+import com.example.android.sunshine.utilities.NetworkUtils;
+import com.example.android.sunshine.utilities.OpenWeatherJsonUtils;
+
+import org.json.JSONException;
+
+import java.io.IOException;
+import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,24 +39,48 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_forecast);
 
         mWeatherDisplayTextView = (TextView) findViewById(R.id.tv_weather_data);
-        String[] weatherData = {
-                "Today, May 17 - Clear - 17°C / 15°C",
-                "Tomorrow - Cloudy - 19°C / 15°C",
-                "Thursday - Rainy- 30°C / 11°C",
-                "Friday - Thunderstorms - 21°C / 9°C",
-                "Saturday - Thunderstorms - 16°C / 7°C",
-                "Sunday - Rainy - 16°C / 8°C",
-                "Monday - Partly Cloudy - 15°C / 10°C",
-                "Tue, May 24 - Meatballs - 16°C / 18°C",
-                "Wed, May 25 - Cloudy - 19°C / 15°C",
-                "Thu, May 26 - Stormy - 30°C / 11°C",
-                "Fri, May 27 - Hurricane - 21°C / 9°C",
-                "Sat, May 28 - Meteors - 16°C / 7°C",
-                "Sun, May 29 - Apocalypse - 16°C / 8°C",
-                "Mon, May 30 - Post Apocalypse - 15°C / 10°C",
-        };
-        // append each String from the weather data array to the TextView
-        for(String data : weatherData)
-            mWeatherDisplayTextView.append(data + "\n\n\n");
+
+        // perform the network request to get the weather
+        this.loadWeatherData();
+    }
+
+    /**
+     * A method will get the user's preferred location and execute the new AsyncTask.
+     */
+    private void loadWeatherData() {
+        URL url = NetworkUtils.buildUrl(SunshinePreferences.getPreferredWeatherLocation(this));
+        new FetchWeatherTask().execute(url);
+    }
+
+    /**
+     * Class performs the network request
+     */
+    public class FetchWeatherTask extends AsyncTask<URL, Void, String[]> {
+
+        @Override
+        protected String[] doInBackground(URL... urls) {
+            String[] respArr = null;
+            String respWeatherData = null;
+            try {
+                if(urls.length > 0) {
+                    // perform the network request
+                    respWeatherData = NetworkUtils.getResponseFromHttpUrl(urls[0]);
+                    // get simple weather strings form json
+                    respArr = OpenWeatherJsonUtils.getSimpleWeatherStringsFromJson(MainActivity.this, respWeatherData);
+                }
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            }
+            return respArr;
+        }
+
+        @Override
+        protected void onPostExecute(String[] s) {
+            if(s != null) {
+                // iterate over weather data and display the results of the network request
+                for(String data : s)
+                    mWeatherDisplayTextView.append(data + "\n\n\n");
+            }
+        }
     }
 }
