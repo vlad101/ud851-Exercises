@@ -37,8 +37,8 @@ import java.net.URL;
 public class MainActivity extends AppCompatActivity {
 
     private TextView mWeatherDisplayTextView;
-    private TextView mDisplayErrorTextView;
-    private ProgressBar mDisplayProgressBar;
+    private TextView mErrorMessageDisplay;
+    private ProgressBar mLoadingIndicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +46,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_forecast);
 
         mWeatherDisplayTextView = (TextView) findViewById(R.id.tv_weather_data);
-        mDisplayErrorTextView = (TextView) findViewById(R.id.tv_error);
-        mDisplayProgressBar = (ProgressBar) findViewById(R.id.pb_loader);
+        mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
+        mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
 
         // perform the network request to get the weather
         this.loadWeatherData();
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             // show the loading indicator
-            mDisplayProgressBar.setVisibility(View.VISIBLE);
+            mLoadingIndicator.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String[] s) {
-            mDisplayProgressBar.setVisibility(View.INVISIBLE);
+            mLoadingIndicator.setVisibility(View.INVISIBLE);
             if(s != null && s.length > 0) {
                 // hide the error, show the data
                 this.showWeatherDataView();
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
             // hide the weather data
             mWeatherDisplayTextView.setVisibility(View.INVISIBLE);
             // show the error message
-            mDisplayErrorTextView.setVisibility(View.VISIBLE);
+            mErrorMessageDisplay.setVisibility(View.VISIBLE);
         }
 
         /**
@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
          */
         private void showWeatherDataView() {
             // hide the error message
-            mDisplayErrorTextView.setVisibility(View.INVISIBLE);
+            mErrorMessageDisplay.setVisibility(View.INVISIBLE);
             // show the weather data
             mWeatherDisplayTextView.setVisibility(View.VISIBLE);
         }

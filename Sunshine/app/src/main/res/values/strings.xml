@@ -28,7 +28,7 @@
     <string name="action_refresh">Refresh</string>
 
     <!-- For labelling an error message [CHAR LIMIT=15] -->
-    <string name="error">An error occurred...</string>
+    <string name="error_message">An error occurred...</string>
 
     <!-- - - - - - - - - - - - - -->
     <!--Used by SunshineDateUtils-->
