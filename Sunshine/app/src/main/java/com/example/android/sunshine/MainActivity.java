@@ -18,6 +18,8 @@ package com.example.android.sunshine;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,7 +38,9 @@ import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView mWeatherDisplayTextView;
+    //private TextView mWeatherTextView;
+    private RecyclerView mRecyclerView;
+    private ForecastAdapter mForecastAdapter;
     private TextView mErrorMessageDisplay;
     private ProgressBar mLoadingIndicator;
 
@@ -45,9 +49,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forecast);
 
-        mWeatherDisplayTextView = (TextView) findViewById(R.id.tv_weather_data);
+        //mWeatherTextView = (TextView) findViewById(R.id.tv_weather_data);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_forecast);
         mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setHasFixedSize(true);
+        mForecastAdapter = new ForecastAdapter();
+        mRecyclerView.setAdapter(mForecastAdapter);
 
         // perform the network request to get the weather
         this.loadWeatherData();
@@ -91,14 +103,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(String[] s) {
+        protected void onPostExecute(String[] weatherData) {
             mLoadingIndicator.setVisibility(View.INVISIBLE);
-            if(s != null && s.length > 0) {
+            if(weatherData != null && weatherData.length > 0) {
                 // hide the error, show the data
                 this.showWeatherDataView();
                 // iterate over weather data and display the results of the network request
-                for(String data : s)
-                    mWeatherDisplayTextView.append(data + "\n\n\n");
+                mForecastAdapter.setmWeatherData(weatherData);
             } else {
                 // hide the data, show the error
                 this.showErrorMessage();
@@ -110,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
          */
         private void showErrorMessage() {
             // hide the weather data
-            mWeatherDisplayTextView.setVisibility(View.INVISIBLE);
+            mRecyclerView.setVisibility(View.INVISIBLE);
             // show the error message
             mErrorMessageDisplay.setVisibility(View.VISIBLE);
         }
@@ -122,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
             // hide the error message
             mErrorMessageDisplay.setVisibility(View.INVISIBLE);
             // show the weather data
-            mWeatherDisplayTextView.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -140,8 +151,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.action_refresh:
-                // clear weather text
-                mWeatherDisplayTextView.setText("");
+                // clear forecast adapter
+                mForecastAdapter = null;
                 // re-load data
                 loadWeatherData();
                 return true;
