@@ -15,6 +15,7 @@
  */
 package com.example.android.sunshine;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -36,7 +37,7 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.net.URL;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ForecastAdapter.ForecastAdapterOnClickHnadler {
 
     //private TextView mWeatherTextView;
     private RecyclerView mRecyclerView;
@@ -49,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forecast);
 
-        //mWeatherTextView = (TextView) findViewById(R.id.tv_weather_data);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_forecast);
         mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
-        mForecastAdapter = new ForecastAdapter();
+        mForecastAdapter = new ForecastAdapter(this);
         mRecyclerView.setAdapter(mForecastAdapter);
 
         // load data
@@ -71,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
         URL url = NetworkUtils.buildUrl(SunshinePreferences.getPreferredWeatherLocation(this));
         new FetchWeatherTask().execute(url);
     }
+
+//    ????? Something with a  a toast TODO
 
     /**
      * Class performs the network request
@@ -158,5 +160,10 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onClick(String dayWeather) {
+        Toast.makeText(this, dayWeather, Toast.LENGTH_SHORT).show();
     }
 }
