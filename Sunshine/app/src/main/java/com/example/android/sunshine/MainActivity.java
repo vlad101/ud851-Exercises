@@ -54,15 +54,14 @@ public class MainActivity extends AppCompatActivity {
         mErrorMessageDisplay = (TextView) findViewById(R.id.tv_error_message_display);
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
         mForecastAdapter = new ForecastAdapter();
         mRecyclerView.setAdapter(mForecastAdapter);
 
-        // perform the network request to get the weather
-        this.loadWeatherData();
+        // load data
+        loadWeatherData();
     }
 
     /**
@@ -107,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
             mLoadingIndicator.setVisibility(View.INVISIBLE);
             if(weatherData != null && weatherData.length > 0) {
                 // hide the error, show the data
-                this.showWeatherDataView();
+                showWeatherDataView();
                 // iterate over weather data and display the results of the network request
                 mForecastAdapter.setmWeatherData(weatherData);
             } else {
@@ -152,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
         switch(item.getItemId()) {
             case R.id.action_refresh:
                 // clear forecast adapter
-                mForecastAdapter = null;
+                mForecastAdapter.setmWeatherData(null);
                 // re-load data
                 loadWeatherData();
                 return true;

@@ -25,18 +25,18 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
 
     class ForecastAdapterViewHolder extends RecyclerView.ViewHolder {
         public final TextView mWeatherTextView;
-        public ForecastAdapterViewHolder(View itemView) {
-            super(itemView);
-            mWeatherTextView = (TextView) itemView.findViewById(R.id.tv_weather_data);
+        public ForecastAdapterViewHolder(View view) {
+            super(view);
+            mWeatherTextView = (TextView) view.findViewById(R.id.tv_weather_data);
         }
 
         /**
          * A method we wrote for convenience. This method will take an integer as input and
          * use that integer to display the appropriate text within a list item.
-         * @param listIndex Position of the item in the list
+         * @param dayWeather of this day
          */
-        void bind(int listIndex) {
-            mWeatherTextView.setText(String.valueOf(listIndex));
+        void bind(String  dayWeather) {
+            mWeatherTextView.setText(dayWeather);
         }
     }
 
@@ -48,7 +48,6 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
         boolean shouldAttachToParentImmediately = false;
         View view = inflater.inflate(layoutIdForListItem, parent, shouldAttachToParentImmediately);
         ForecastAdapterViewHolder viewHolder = new ForecastAdapterViewHolder(view);
-        // TODO
         return viewHolder;
     }
 
@@ -66,11 +65,12 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
 
     @Override
     public void onBindViewHolder(ForecastAdapterViewHolder holder, int position) {
-        Log.d(TAG, "#" + position);
-        holder.bind(position);
+        Log.d(TAG, "Position #: " + position + " / " + "Data: " + mWeatherData[position]);
+        holder.bind(mWeatherData[position]);
     }
 
     public void setmWeatherData(String[] weatherData) {
         mWeatherData = weatherData;
+        notifyDataSetChanged();
     }
 }
