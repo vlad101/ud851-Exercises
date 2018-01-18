@@ -16,11 +16,14 @@
 package com.example.android.sunshine;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,7 +42,7 @@ import java.net.URL;
 
 public class MainActivity extends AppCompatActivity implements ForecastAdapter.ForecastAdapterOnClickHnadler {
 
-    //private TextView mWeatherTextView;
+    private static final String TAG = MainActivity.class.getSimpleName();
     private RecyclerView mRecyclerView;
     private ForecastAdapter mForecastAdapter;
     private TextView mErrorMessageDisplay;
@@ -71,8 +74,6 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
         URL url = NetworkUtils.buildUrl(SunshinePreferences.getPreferredWeatherLocation(this));
         new FetchWeatherTask().execute(url);
     }
-
-//    ????? Something with a  a toast TODO
 
     /**
      * Class performs the network request
@@ -157,6 +158,9 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
                 // re-load data
                 loadWeatherData();
                 return true;
+            case R.id.action_map:
+                showMap();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -164,6 +168,30 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
 
     @Override
     public void onClick(String dayWeather) {
-        Toast.makeText(this, dayWeather, Toast.LENGTH_SHORT).show();
+        Context context = this;
+        Class destinationActivity = DetailActivity.class;
+        Intent startDetailActivityIntent = new Intent(context, destinationActivity);
+        startDetailActivityIntent.putExtra(Intent.EXTRA_TEXT, dayWeather);
+        startActivity(startDetailActivityIntent);
+    }
+
+    /*
+        Helper intent methods.
+     */
+
+    /**
+     * This method will fire off an implicit Intent to view a location on a map.
+     */
+    private void showMap() {
+
+        String addressString = "1600 Amphitheatre Parkway, CA";
+        Uri geoLocation = Uri.parse("geo:0,0?q=" + addressString);
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(geoLocation);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        } else {
+            Log.d(TAG, "Couldn't call " + geoLocation.toString() + ", no receiving apps installed!");
+        }
     }
 }

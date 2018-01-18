@@ -27,6 +27,12 @@
     <!-- For labelling a refresh menu item [CHAR LIMIT=15] -->
     <string name="action_refresh">Refresh</string>
 
+    <!-- For labelling a share menu item [CHAR LIMIT=15] -->
+    <string name="action_share">Share</string>
+
+    <!-- For labelling a share map item [CHAR LIMIT=15] -->
+    <string name="action_map">Map Location</string>
+
     <!-- For labelling an error message [CHAR LIMIT=15] -->
     <string name="error_message">An error occurred...</string>
 
